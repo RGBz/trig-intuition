@@ -46,14 +46,14 @@ function drawCircle(canvas, color) {
   ctx.beginPath();
   ctx.moveTo(centerX + x, centerY);
   ctx.lineTo(centerX + x, centerY - y);
-  ctx.strokeStyle = "#f0f";
+  ctx.strokeStyle = "#ff0044";
   ctx.lineWidth = 1;
   ctx.stroke();
 
   ctx.beginPath();
   ctx.moveTo(centerX, centerY);
   ctx.lineTo(centerX + x, centerY);
-  ctx.strokeStyle = "#0f0";
+  ctx.strokeStyle = "#00ff00";
   ctx.lineWidth = 1;
   ctx.stroke();
 
@@ -79,13 +79,18 @@ function drawGraph(canvas, color, fn, min, max) {
   ctx.lineTo(canvas.width, canvas.height / 2);
   ctx.stroke();
 
-  for (let i = 0; i < 5; i++) {
-    const x = [0, 0.25, 0.5, 0.75, 1][i];
+  for (let i = 0; i < 8; i++) {
+    const x = i / 8;
+    const offset = i % 2 ? canvas.height / 6 : 0;
     ctx.beginPath();
-    ctx.moveTo(canvas.width * x, 0);
-    ctx.lineTo(canvas.width * x, canvas.height);
+    ctx.moveTo(canvas.width * x, offset);
+    ctx.lineTo(canvas.width * x, canvas.height - offset);
     ctx.stroke();
   }
+  ctx.beginPath();
+  ctx.moveTo(canvas.width, 0);
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.stroke();
 
   ctx.beginPath();
   let started = false;
@@ -95,7 +100,7 @@ function drawGraph(canvas, color, fn, min, max) {
       break;
     }
     const x = step;
-    const y = (canvas.height / 2 + fn(i) * canvas.height / 2) * 0.95 + 3;
+    const y = (canvas.height / 2 - fn(i) * canvas.height / 2) * 0.95 + 3;
     if (!started) {
       started = true;
       ctx.moveTo(x, y);
@@ -122,17 +127,17 @@ function handleResize() {
  * Render the unit circle, sine and cosine graphs based on the x and y coords relative to the unit circle
  */
 function render() {
-  drawCircle(circleCanvas, "#0f0");
+  drawCircle(circleCanvas, "#00ff00");
   drawGraph(
     sinCanvas,
-    "#f0f",
+    "#ff0044",
     Math.sin, 
     0, 
     2 * Math.PI
   );
   drawGraph(
     cosCanvas,
-    "#0f0",
+    "#00ff00",
     Math.cos, 
     0, 
     2 * Math.PI
@@ -141,7 +146,7 @@ function render() {
 
 function updateTheta(value) {
   lastTheta = value < 0 ? value + 2 * Math.PI : value;
-  theta.innerText = `θ = ${(lastTheta / Math.PI).toFixed(2)}π | ${radiansToDegrees(lastTheta).toFixed(2)}°`;
+  theta.innerText = `θ = ${(lastTheta / Math.PI).toFixed(2)}π | ${radiansToDegrees(lastTheta).toFixed(2)}° | x = ${Math.cos(lastTheta).toFixed(2)} | y = ${Math.sin(lastTheta).toFixed(2)}`;
   render();
 }
 
@@ -152,10 +157,12 @@ circleCanvas.addEventListener("mousemove", (e) => {
   const y = -(e.clientY - rect.top - rect.height / 2);
   updateTheta(Math.atan2(y, x));
 });
-graphs.addEventListener("mousemove", (e) => {
+function handleGraphMouse(e) {
   const rect = e.target.getBoundingClientRect();
   const x = e.clientX - rect.left;
   updateTheta((x / rect.width) * (2 * Math.PI));
-});
+}
+sinCanvas.addEventListener("mousemove", handleGraphMouse);
+cosCanvas.addEventListener("mousemove", handleGraphMouse);
 
 handleResize(); 

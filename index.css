@@ -1,26 +1,29 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: black;
+  background-color: #112;
   color: white;
-  font-family: Verdana, sans-serif;
+  font-family: sans-serif;
+  font-weight: 100;
   line-height: 1.8em;
 }
 
 h1 {
   text-align: center;
+  margin: 60px 0 40px;
+  font-weight: 400;
 }
 
 a, a:visited {
-  color: cyan;
+  color: #0044ff;
 }
 
 strong {
-  color: #0f0;
+  color: #00ff00;
 }
 
 i {
-  color: magenta;
+  color: #ffffff66;
 }
 
 #theta {
@@ -64,5 +67,5 @@ i {
 }
 
 .caption {
-  color: #666;
+  color: #ffffff66;
 }
