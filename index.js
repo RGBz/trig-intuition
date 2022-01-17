@@ -15,8 +15,6 @@ function radiansToDegrees(radians) {
   return radians * 180 / Math.PI;
 }
 
-const axisColors = ["#ffffff", "#00ffff", "#ffff00", "#ff00ff", "#ffffff"];
-
 function drawCircle(canvas, color) {
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
@@ -24,38 +22,22 @@ function drawCircle(canvas, color) {
   const ctx = canvas.getContext("2d");
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 0.5;
+  
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius - 1, 0, 2 * Math.PI);
-  ctx.strokeStyle = "#ffffff";
-  ctx.lineWidth = 0.5;
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
+  ctx.moveTo(0, centerY);
   ctx.lineTo(canvas.width, centerY);
-  ctx.strokeStyle = axisColors[0];
-  ctx.lineWidth = 0.5;
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.lineTo(centerX, 0);
-  ctx.strokeStyle = axisColors[1];
-  ctx.lineWidth = 0.5;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.lineTo(0, centerY);
-  ctx.strokeStyle = axisColors[2];
-  ctx.lineWidth = 0.5;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
+  ctx.moveTo(centerX, 0);
   ctx.lineTo(centerX, canvas.height);
-  ctx.strokeStyle = axisColors[3];
-  ctx.lineWidth = 0.5;
   ctx.stroke();
 
   const x = Math.cos(lastTheta) * radius;
@@ -65,21 +47,21 @@ function drawCircle(canvas, color) {
   ctx.moveTo(centerX + x, centerY);
   ctx.lineTo(centerX + x, centerY - y);
   ctx.strokeStyle = "#f0f";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 1;
   ctx.stroke();
 
   ctx.beginPath();
   ctx.moveTo(centerX, centerY);
   ctx.lineTo(centerX + x, centerY);
   ctx.strokeStyle = "#0f0";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 1;
   ctx.stroke();
 
   ctx.beginPath();
   ctx.moveTo(centerX, centerY);
   ctx.lineTo(centerX + x, centerY - y);
   ctx.strokeStyle = "#fff";
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 1;
   ctx.stroke();
 }
 
@@ -89,11 +71,12 @@ function drawGraph(canvas, color, fn, min, max) {
   const distance = max - min;
   const scale = canvas.width / distance;
   
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 0.5;
+
   ctx.beginPath();
   ctx.moveTo(0, canvas.height / 2);
   ctx.lineTo(canvas.width, canvas.height / 2);
-  ctx.strokeStyle = "#ffffff";
-  ctx.lineWidth = 0.5;
   ctx.stroke();
 
   for (let i = 0; i < 5; i++) {
@@ -101,8 +84,6 @@ function drawGraph(canvas, color, fn, min, max) {
     ctx.beginPath();
     ctx.moveTo(canvas.width * x, 0);
     ctx.lineTo(canvas.width * x, canvas.height);
-    ctx.strokeStyle = axisColors[i];
-    ctx.lineWidth = 0.5;
     ctx.stroke();
   }
 
@@ -123,7 +104,7 @@ function drawGraph(canvas, color, fn, min, max) {
     }
   }
   ctx.strokeStyle = color;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 1;
   ctx.stroke();
 }
 
