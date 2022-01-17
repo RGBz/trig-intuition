@@ -1,0 +1,68 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: white;
+  font-family: Verdana, sans-serif;
+  line-height: 1.8em;
+}
+
+h1 {
+  text-align: center;
+}
+
+a, a:visited {
+  color: cyan;
+}
+
+strong {
+  color: #0f0;
+}
+
+i {
+  color: magenta;
+}
+
+#theta {
+  text-align: center;
+}
+
+#content {
+  margin: 20px auto;
+  width: 90%;
+}
+
+#infographic {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+}
+
+#graphs {
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+}
+
+#graphs .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+#graphs canvas {
+  display: block;
+  width: auto;
+}
+
+.canvas-wrap {
+  margin-left: 20px;
+  flex-grow: 1;
+}
+
+.caption {
+  color: #666;
+}
