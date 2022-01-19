@@ -39,6 +39,7 @@ i {
   margin-top: 50px;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 #graphs {
@@ -68,4 +69,8 @@ i {
 
 .caption {
   color: #ffffff66;
+}
+
+canvas:hover {
+  cursor: none;
 }

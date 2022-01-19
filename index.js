@@ -7,47 +7,34 @@ const cosCanvas = document.getElementById("cosine");
 
 let lastTheta = 0;
 
-function degreesToRadians(degrees) {
-  return degrees * Math.PI / 180;
-}
+const degreesToRadians = (degrees) => degrees * Math.PI / 180;
+const radiansToDegrees = (radians) => radians * 180 / Math.PI;
 
-function radiansToDegrees(radians) {
-  return radians * 180 / Math.PI;
-}
-
-function drawCircle(canvas, color) {
+const drawCircle = (canvas) => {
+  const ctx = canvas.getContext("2d");
   const centerX = canvas.width / 2;
   const centerY = canvas.height / 2;
   const radius = Math.min(centerX, centerY) - 10;
-  const ctx = canvas.getContext("2d");
+  const x = Math.cos(lastTheta) * radius;
+  const y = Math.sin(lastTheta) * radius;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
+  ctx.beginPath();
   ctx.strokeStyle = "#666";
   ctx.lineWidth = 0.5;
-  
-  ctx.beginPath();
   ctx.arc(centerX, centerY, radius - 1, 0, 2 * Math.PI);
-  ctx.stroke();
-
-  ctx.beginPath();
   ctx.moveTo(0, centerY);
   ctx.lineTo(canvas.width, centerY);
-  ctx.stroke();
-
-  ctx.beginPath();
   ctx.moveTo(centerX, 0);
   ctx.lineTo(centerX, canvas.height);
   ctx.stroke();
 
-  const x = Math.cos(lastTheta) * radius;
-  const y = Math.sin(lastTheta) * radius;
-
   ctx.beginPath();
-  ctx.moveTo(centerX + x, centerY);
-  ctx.lineTo(centerX + x, centerY - y);
   ctx.strokeStyle = "#ff0044";
   ctx.lineWidth = 1;
+  ctx.moveTo(centerX + x, centerY);
+  ctx.lineTo(centerX + x, centerY - y);
   ctx.stroke();
 
   ctx.beginPath();
@@ -65,104 +52,90 @@ function drawCircle(canvas, color) {
   ctx.stroke();
 }
 
-function drawGraph(canvas, color, fn, min, max) {
+const drawGraph = (canvas, color, fn, min, max) => {
   const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   const distance = max - min;
   const scale = canvas.width / distance;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   
+  ctx.beginPath();
   ctx.strokeStyle = "#666";
   ctx.lineWidth = 0.5;
-
-  ctx.beginPath();
   ctx.moveTo(0, canvas.height / 2);
   ctx.lineTo(canvas.width, canvas.height / 2);
-  ctx.stroke();
-
   for (let i = 0; i < 8; i++) {
     const x = i / 8;
     const offset = i % 2 ? canvas.height / 6 : 0;
-    ctx.beginPath();
     ctx.moveTo(canvas.width * x, offset);
     ctx.lineTo(canvas.width * x, canvas.height - offset);
-    ctx.stroke();
   }
-  ctx.beginPath();
   ctx.moveTo(canvas.width, 0);
   ctx.lineTo(canvas.width, canvas.height);
   ctx.stroke();
 
   ctx.beginPath();
-  let started = false;
+  ctx.strokeStyle = "#222";
+  ctx.lineWidth = 1;
+  ctx.moveTo(0, (canvas.height / 2 - fn(0) * canvas.height / 2));
   for (let step = 0; step < canvas.width; step++) {
     const i = step / scale;
-    if (i >= lastTheta) {
-      break;
-    }
     const x = step;
-    const y = (canvas.height / 2 - fn(i) * canvas.height / 2) * 0.95 + 3;
-    if (!started) {
-      started = true;
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
+    if (i >= lastTheta) {
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.moveTo(x, (canvas.height / 2 - fn(i) * canvas.height / 2));
+      ctx.lineTo(x, canvas.height / 2);
+      ctx.stroke();
+      return;
     }
+    ctx.lineTo(x, (canvas.height / 2 - fn(i) * canvas.height / 2));
   }
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1;
-  ctx.stroke();
 }
 
-function handleResize() {
-  circleCanvas.width = Math.floor(infographic.offsetWidth / 4);
-  circleCanvas.height = Math.floor(infographic.offsetWidth / 4);
+const handleResize = () => {
+  circleCanvas.width = Math.floor(infographic.offsetWidth / 8);
+  circleCanvas.height = Math.floor(infographic.offsetWidth / 8);
   sinCanvas.width = sinCanvas.parentElement.offsetWidth;
-  sinCanvas.height = (circleCanvas.height - 20) / 2;
+  sinCanvas.height = circleCanvas.height;
   cosCanvas.width = cosCanvas.parentElement.offsetWidth;
-  cosCanvas.height = (circleCanvas.height - 20) / 2;
+  cosCanvas.height = circleCanvas.height;
   render();
 }
 
-/**
- * Render the unit circle, sine and cosine graphs based on the x and y coords relative to the unit circle
- */
-function render() {
+const render = () => {
   drawCircle(circleCanvas, "#00ff00");
-  drawGraph(
-    sinCanvas,
-    "#ff0044",
-    Math.sin, 
-    0, 
-    2 * Math.PI
-  );
-  drawGraph(
-    cosCanvas,
-    "#00ff00",
-    Math.cos, 
-    0, 
-    2 * Math.PI
-  );
+  drawGraph(sinCanvas, "#ff0044", Math.sin, 0, 2 * Math.PI);
+  drawGraph(cosCanvas, "#00ff00", Math.cos, 0, 2 * Math.PI);
 }
 
-function updateTheta(value) {
+const updateTheta = (value) => {
   lastTheta = value < 0 ? value + 2 * Math.PI : value;
-  theta.innerText = `θ = ${(lastTheta / Math.PI).toFixed(2)}π | ${radiansToDegrees(lastTheta).toFixed(2)}° | x = ${Math.cos(lastTheta).toFixed(2)} | y = ${Math.sin(lastTheta).toFixed(2)}`;
+  theta.innerText = [
+    `θ = ${(lastTheta / Math.PI).toFixed(2)}π`,
+    `${radiansToDegrees(lastTheta).toFixed(2)}°`,
+    `x = ${Math.cos(lastTheta).toFixed(2)}`,
+    `y = ${Math.sin(lastTheta).toFixed(2)}`,
+  ].join(" | ");
   render();
 }
 
-window.addEventListener('resize', handleResize);
-circleCanvas.addEventListener("mousemove", (e) => {
+const handleCircleMouse = (e) => {
   const rect = circleCanvas.getBoundingClientRect();
   const x = e.clientX - rect.left - rect.width / 2;
   const y = -(e.clientY - rect.top - rect.height / 2);
   updateTheta(Math.atan2(y, x));
-});
-function handleGraphMouse(e) {
+}
+
+const handleGraphMouse = (e) => {
   const rect = e.target.getBoundingClientRect();
   const x = e.clientX - rect.left;
   updateTheta((x / rect.width) * (2 * Math.PI));
 }
+
+window.addEventListener('resize', handleResize);
+circleCanvas.addEventListener("mousemove", handleCircleMouse);
 sinCanvas.addEventListener("mousemove", handleGraphMouse);
 cosCanvas.addEventListener("mousemove", handleGraphMouse);
-
 handleResize(); 
