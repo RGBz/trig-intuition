@@ -23,11 +23,18 @@ const drawCircle = (canvas) => {
   ctx.beginPath();
   ctx.strokeStyle = "#666";
   ctx.lineWidth = 0.5;
-  ctx.arc(centerX, centerY, radius - 1, 0, 2 * Math.PI);
+  ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
   ctx.moveTo(0, centerY);
   ctx.lineTo(canvas.width, centerY);
   ctx.moveTo(centerX, 0);
   ctx.lineTo(centerX, canvas.height);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(centerX + x, centerY - y);
+  ctx.strokeStyle = "#222";
+  ctx.lineWidth = 1;
   ctx.stroke();
 
   ctx.beginPath();
@@ -45,10 +52,9 @@ const drawCircle = (canvas) => {
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.lineTo(centerX + x, centerY - y);
   ctx.strokeStyle = "#fff";
   ctx.lineWidth = 1;
+  ctx.arc(centerX, centerY, radius, 0, -lastTheta, true);
   ctx.stroke();
 }
 
@@ -86,6 +92,11 @@ const drawGraph = (canvas, color, fn, min, max) => {
       ctx.beginPath();
       ctx.strokeStyle = color;
       ctx.moveTo(x, (canvas.height / 2 - fn(i) * canvas.height / 2));
+      ctx.lineTo(x, canvas.height / 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.strokeStyle = "#fff";
+      ctx.moveTo(0, canvas.height / 2);
       ctx.lineTo(x, canvas.height / 2);
       ctx.stroke();
       return;
