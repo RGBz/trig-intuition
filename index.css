@@ -39,6 +39,7 @@ i {
   margin-top: 50px;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
 }
 
@@ -46,8 +47,6 @@ i {
   margin-left: 20px;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  justify-content: space-between;
 }
 
 #graphs .row {

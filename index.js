@@ -58,77 +58,81 @@ const drawCircle = (canvas) => {
   ctx.stroke();
 }
 
-const drawGraph = (canvas, color, fn, min, max) => {
+const drawGraph = (canvas, label, color, fn, min, max) => {
   const ctx = canvas.getContext("2d");
   const distance = max - min;
-  const scale = canvas.width / distance;
+  const graphWidth = canvas.width - 120;
+  const scale = graphWidth / distance;
+  const originY = canvas.height / 2;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   ctx.beginPath();
   ctx.strokeStyle = "#666";
   ctx.lineWidth = 0.5;
-  ctx.moveTo(0, canvas.height / 2);
-  ctx.lineTo(canvas.width, canvas.height / 2);
+  ctx.moveTo(0, originY);
+  ctx.lineTo(graphWidth, originY);
   for (let i = 0; i < 8; i++) {
     const x = i / 8;
     const offset = i % 2 ? canvas.height / 6 : 0;
-    ctx.moveTo(canvas.width * x, offset);
-    ctx.lineTo(canvas.width * x, canvas.height - offset);
+    ctx.moveTo(graphWidth * x, offset);
+    ctx.lineTo(graphWidth * x, canvas.height - offset);
   }
-  ctx.moveTo(canvas.width, 0);
-  ctx.lineTo(canvas.width, canvas.height);
+  ctx.moveTo(graphWidth, 0);
+  ctx.lineTo(graphWidth, canvas.height);
   ctx.stroke();
 
   ctx.beginPath();
   ctx.strokeStyle = "#222";
   ctx.lineWidth = 1;
-  ctx.moveTo(0, (canvas.height / 2 - fn(0) * canvas.height / 2));
-  for (let step = 0; step < canvas.width; step++) {
+  ctx.moveTo(0, originY - fn(0) * originY);
+  for (let step = 0; step < graphWidth; step++) {
     const i = step / scale;
     const x = step;
+    const y = originY - fn(i) * originY;
     if (i >= lastTheta) {
       ctx.stroke();
       ctx.beginPath();
       ctx.strokeStyle = color;
-      ctx.moveTo(x, (canvas.height / 2 - fn(i) * canvas.height / 2));
-      ctx.lineTo(x, canvas.height / 2);
+      ctx.moveTo(x, y);
+      ctx.fillStyle = color;
+      ctx.font = '16px sans-serif';
+      ctx.fillText(`${label} = ${fn(i).toFixed(3)}`, x + 10, originY - (fn(i) * originY - 8) / 2);
+      ctx.lineTo(x, originY);
       ctx.stroke();
       ctx.beginPath();
       ctx.strokeStyle = "#fff";
-      ctx.moveTo(0, canvas.height / 2);
-      ctx.lineTo(x, canvas.height / 2);
+      ctx.moveTo(0, originY);
+      ctx.lineTo(x, originY);
       ctx.stroke();
       return;
     }
-    ctx.lineTo(x, (canvas.height / 2 - fn(i) * canvas.height / 2));
+    ctx.lineTo(x, y);
   }
 }
 
 const handleResize = () => {
-  circleCanvas.width = Math.floor(infographic.offsetWidth / 8);
-  circleCanvas.height = Math.floor(infographic.offsetWidth / 8);
-  sinCanvas.width = sinCanvas.parentElement.offsetWidth;
-  sinCanvas.height = circleCanvas.height;
-  cosCanvas.width = cosCanvas.parentElement.offsetWidth;
-  cosCanvas.height = circleCanvas.height;
+  circleCanvas.width = Math.floor(infographic.offsetWidth / 5);
+  circleCanvas.height = Math.floor(infographic.offsetWidth / 5);
+  sinCanvas.width = (circleCanvas.width - 20) * Math.PI + 120;
+  sinCanvas.height = circleCanvas.height - 20;
+  cosCanvas.width = (circleCanvas.width - 20) * Math.PI + 120;
+  cosCanvas.height = circleCanvas.height - 20;
   render();
 }
 
 const render = () => {
   drawCircle(circleCanvas, "#00ff00");
-  drawGraph(sinCanvas, "#ff0044", Math.sin, 0, 2 * Math.PI);
-  drawGraph(cosCanvas, "#00ff00", Math.cos, 0, 2 * Math.PI);
+  drawGraph(sinCanvas, "height", "#ff0044", Math.sin, 0, 2 * Math.PI);
+  drawGraph(cosCanvas, "width", "#00ff00", Math.cos, 0, 2 * Math.PI);
 }
 
 const updateTheta = (value) => {
   lastTheta = value < 0 ? value + 2 * Math.PI : value;
   theta.innerText = [
-    `θ = ${(lastTheta / Math.PI).toFixed(2)}π`,
+    `θ = ${(lastTheta / Math.PI).toFixed(2)} π`,
     `${radiansToDegrees(lastTheta).toFixed(2)}°`,
-    `x = ${Math.cos(lastTheta).toFixed(2)}`,
-    `y = ${Math.sin(lastTheta).toFixed(2)}`,
-  ].join(" | ");
+  ].join(" ≈ ");
   render();
 }
 
@@ -142,7 +146,7 @@ const handleCircleMouse = (e) => {
 const handleGraphMouse = (e) => {
   const rect = e.target.getBoundingClientRect();
   const x = e.clientX - rect.left;
-  updateTheta((x / rect.width) * (2 * Math.PI));
+  updateTheta((x / (rect.width - 120)) * (2 * Math.PI));
 }
 
 window.addEventListener('resize', handleResize);
